@@ -1,4 +1,5 @@
 import express from 'express';
+import nfetch, { RequestInit } from 'node-fetch';
 
 interface Route {
     method: "get" | "post";
@@ -19,7 +20,7 @@ export default interface IServer {
     post(path: string, requestHandler: (req: express.Request, res: express.Response) => void): void;
     use(middleware: Middleware): void;
     listen(startMessage: string): void;
-    fetch(): void;
+    fetch(url: string, options: RequestInit): void;
     delete(): void;
 }
 
@@ -58,7 +59,14 @@ export class Server implements IServer {
         });
     }
     
-    fetch() {};
+    async fetch(url: string, options: RequestInit) {
+        const response = await nfetch(url, options);
+        if (!response.ok) {
+            console.error(`error: status ${response.status}`);
+        }
+
+        return response.json();
+    };
 
     delete() {};
 }
