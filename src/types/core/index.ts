@@ -1,5 +1,5 @@
 import express from 'express';
-import nfetch, { RequestInit } from 'node-fetch';
+import axios from 'axios';
 
 interface Route {
     method: "get" | "post";
@@ -20,7 +20,7 @@ export default interface IServer {
     post(path: string, requestHandler: (req: express.Request, res: express.Response) => void): void;
     use(middleware: Middleware): void;
     listen(startMessage: string): void;
-    fetch(url: string, options: RequestInit): void;
+    fetch(url: string, options?: { method: string, body?: any, headers?: any }): void
     delete(): void;
 }
 
@@ -58,15 +58,25 @@ export class Server implements IServer {
             console.log(startMessage);
         });
     }
-    
-    async fetch(url: string, options: RequestInit) {
-        const response = await nfetch(url, options);
-        if (!response.ok) {
-            console.error(`error: status ${response.status}`);
+
+    async fetch(url: string, options?: { method: string, body?: any, headers?: any }): Promise<any> {
+        try {
+            let response;
+
+            if (options?.method?.toUpperCase() === "POST") {
+                response = await axios.post(url, options.body, { headers: options.headers });
+            } else {
+                response = await axios.get(url, { headers: options!.headers });
+            }
+
+            return response.data;
         }
 
-        return response.json();
-    };
+        catch (er) {
+            console.error(`error in function ${er}`);
+            return null;
+        }
+    }
 
     delete() {};
 }
