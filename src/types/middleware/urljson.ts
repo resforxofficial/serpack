@@ -2,7 +2,8 @@ import express from 'express';
 
 export default function json(): express.RequestHandler {
     return (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        if (req.headers["content-type"] === "application/json") {
+        const contentType = req.headers['content-type'] ? req.headers['content-type'].split(';')[0].toLowerCase() : '';
+        if (contentType === "application/json") {
             let data = "";
 
             req.on("data", (chunk) => {
