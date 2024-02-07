@@ -1,5 +1,4 @@
 import express from 'express';
-import { RequestInit } from 'node-fetch';
 
 interface Route {
     method: "get" | "post";
@@ -16,7 +15,6 @@ export default interface IServer {
     routes: Route[];
     middlewares: Middleware[];
     open(path: string, requestHandler: (req: express.Request, res: express.Response) => void): void;
-    post(path: string, requestHandler: (req: express.Request, res: express.Response) => void): void;
     use(middleware: Middleware): void;
     listen(startMessage: string): void;
     fetch(url: string, options: RequestInit): void;
@@ -31,7 +29,6 @@ export declare class Server implements IServer {
     middlewares: Middleware[];
     constructor(port?: number, host?: string);
     open(path: string, requestHandler: (req: express.Request, res: express.Response) => void): void;
-    post(path: string, requestHandler: (req: express.Request, res: express.Response) => void): void;
     use(middleware: Middleware): void;
     listen(startMessage: string): void;
     fetch(url: string, options: RequestInit): Promise<unknown>;
